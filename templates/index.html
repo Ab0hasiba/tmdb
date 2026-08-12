@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineVision — Movie Discovery</title>
+    <!-- Modern web font & monospace -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Header & Navigation -->
+    <header class="app-header">
+        <div class="header-inner">
+            <a href="/" class="brand-logo">
+                <span class="brand-accent">CINE</span>VISION
+            </a>
+            
+            <form id="search-form" class="search-form" action="javascript:void(0);">
+                <div class="search-input-wrapper">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input 
+                        type="text" 
+                        id="search-input" 
+                        placeholder="Search movies by title (e.g. Interstellar, Batman)..." 
+                        autocomplete="off" 
+                        required 
+                    />
+                </div>
+                <button type="submit" id="search-button" class="btn-primary">Search</button>
+            </form>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="app-main">
+        <div class="main-container">
+            <!-- Results Header Status -->
+            <div id="results-header" class="results-header hidden">
+                <h2 class="results-title">Search Results</h2>
+                <span id="results-count" class="results-count mono">0 movies found</span>
+            </div>
+
+            <!-- Loading Spinner State -->
+            <div id="loading-spinner" class="loading-container hidden">
+                <div class="spinner"></div>
+                <p class="loading-text mono">Searching TMDB network...</p>
+            </div>
+
+            <!-- Error Banner State -->
+            <div id="error-banner" class="error-banner hidden" role="alert">
+                <span class="error-title">Error</span>
+                <p id="error-message" class="error-message">Something went wrong.</p>
+            </div>
+
+            <!-- Initial / Empty State -->
+            <div id="empty-state" class="empty-state">
+                <div class="empty-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+                        <line x1="7" y1="2" x2="7" y2="22"></line>
+                        <line x1="17" y1="2" x2="17" y2="22"></line>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <line x1="2" y1="7" x2="7" y2="7"></line>
+                        <line x1="2" y1="17" x2="7" y2="17"></line>
+                        <line x1="17" y1="17" x2="22" y2="17"></line>
+                        <line x1="17" y1="7" x2="22" y2="7"></line>
+                    </svg>
+                </div>
+                <h3 class="empty-title">Discover Cinema</h3>
+                <p class="empty-subtitle">Type a movie title in the search bar above to explore ratings, cast, and detailed overviews.</p>
+            </div>
+
+            <!-- Movie Cards Grid -->
+            <section id="results-grid" class="results-grid hidden" aria-label="Search results"></section>
+        </div>
+    </main>
+
+    <!-- Movie Details Overlay Modal -->
+    <div id="movie-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="modal-backdrop" id="modal-backdrop"></div>
+        <div class="modal-card">
+            <button id="modal-close" class="modal-close-btn" aria-label="Close details window">&times;</button>
+            
+            <div id="modal-loading" class="modal-loading hidden">
+                <div class="spinner"></div>
+                <p class="mono">Loading movie details...</p>
+            </div>
+
+            <div id="modal-content" class="modal-content">
+                <div class="modal-poster-wrap">
+                    <img id="modal-poster" src="" alt="Movie poster" class="modal-poster" />
+                    <div id="modal-poster-fallback" class="modal-poster-fallback hidden">No Image Available</div>
+                </div>
+
+                <div class="modal-details">
+                    <div class="modal-header-info">
+                        <h2 id="modal-title" class="modal-title"></h2>
+                        <p id="modal-tagline" class="modal-tagline"></p>
+                    </div>
+
+                    <div class="modal-meta-grid mono">
+                        <div class="meta-item">
+                            <span class="meta-label">RATING</span>
+                            <span id="modal-rating" class="meta-value highlight"></span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">RELEASE DATE</span>
+                            <span id="modal-release" class="meta-value"></span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">RUNTIME</span>
+                            <span id="modal-runtime" class="meta-value"></span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">VOTES</span>
+                            <span id="modal-votes" class="meta-value"></span>
+                        </div>
+                    </div>
+
+                    <div class="modal-genres-wrap">
+                        <span class="genres-label">GENRES</span>
+                        <div id="modal-genres" class="genres-list"></div>
+                    </div>
+
+                    <div class="modal-overview-wrap">
+                        <span class="overview-label">OVERVIEW</span>
+                        <p id="modal-overview" class="modal-overview-text"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
